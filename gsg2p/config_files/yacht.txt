@@ -1,0 +1,4 @@
+parent = /Users/fernando/Dropbox/my_files/projects/GSGP-WeightedFitness/config_files/master.txt
+experiment.data = /Users/fernando/Dropbox/my_files/research/ISR/datasets/original/yacht-train-#.csv
+experiment.data.test = /Users/fernando/Dropbox/my_files/research/ISR/datasets/original/yacht-test-#.csv
+experiment.file.prefix = output-yacht

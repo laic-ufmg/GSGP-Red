@@ -1,0 +1,56 @@
+# Output directory
+experiment.output.dir = /Users/joaofbsm/Documents/UFMG/2017-2/POC 1/implementation/results/
+# Path to a file with the list of seeds to use during iterations
+experiment.seed = 123456
+# List of terminals used to build new trees (separated by commas)
+tree.build.terminals = edu.gsgp.nodes.terminals.ERC
+# List of functions used to build new trees (separated by commas)
+tree.build.functions = edu.gsgp.nodes.functions.AQ, edu.gsgp.nodes.functions.Sub, edu.gsgp.nodes.functions.Add, edu.gsgp.nodes.functions.Mul
+# Builder used to generate trees for the initial population
+tree.build.builder = RHH
+# Builder used to generate random trees for the semantic operators
+tree.build.builder.random.tree = GROW
+# Type of selector used to select individuals for next generations
+pop.ind.selector = TOURNAMENT
+# Type of experiment (cross-validation or holdout):
+# - If crossvalidation, uses splited data from a list of files. Use paths to the
+# files in the form /pathToFile/repeatedName#repeatedName, where # indicates 
+# where the fold index is placed (a number from 0 to k-1). E.g. /home/iris-#.dat,
+# with 3 folds in the path will look for iris-0.dat, iris-1.dat and iris-2.dat
+# - If holdout, Use paths to the files in the form /pathToFile/repeatedName#repeatedName,
+# where # is composed by the pattern (train|test)-i with i=0,1,...,n-1, where n is
+# the number of experiment files. E.g. /home/iris-#.dat, with 4 files (2x(train+test))
+# in the path will look for iris-train-0.dat, iris-test-0.dat, iris-train-1.dat and iris-test-1.dat
+experiment.design = holdout
+# Max depth allowed when building trees
+tree.build.max.depth = 6
+# Min depth allowed when building trees
+tree.min.depth = 2
+# Population size
+pop.size = 1000
+# Number of generations
+evol.num.generation = 250
+# Tournament size, when using tournament as selector
+pop.ind.selector.tourn.size = 10
+# Number of experiment repetitions (per fold) - default = 1
+experiment.num.repetition = 4
+# Class responsible for evolve a new population from a previous one
+pop.pipeline = edu.gsgp.population.pipeline.StandardPipe
+# Number of threads (for parallel execution)
+evol.num.threads = 4
+# Minimum error to consider a hit
+evol.min.error = 0
+# Fitness function adopted during the evolution
+pop.fitness = edu.gsgp.population.fitness.FitnessRMSE
+# Population Initializer class. Default: edu.gsgp.population.builder.individual.SimplePopulator
+pop.initializer = edu.gsgp.population.populator.SimplePopulator
+# List of breeders classes used during the evolution. The list items must be comma separated and the propability
+# must follow the breeder class separated by a *. E.g.: 
+# edu.gsgp.population.builder.individual.BreederA*0.1, edu.gsgp.population.builder.individual.BreederB*0.9
+breed.list = edu.gsgp.population.operator.GSMBreeder*0.5, edu.gsgp.population.operator.GSXMBreeder*0.5
+#, edu.gsgp.population.builder.individual.GLBreeder*0.05
+# Probability of applying the spreader operator (in standalone mode)
+breed.spread.prob = 0.5
+# Alpha used to compute the effective probability of applying the spreader"
+breed.spread.alpha = 2.0
+rt.pool.size = 200
