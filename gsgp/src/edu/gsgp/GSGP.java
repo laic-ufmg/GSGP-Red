@@ -12,6 +12,7 @@ import edu.gsgp.population.Individual;
 import edu.gsgp.data.PropertiesManager;
 import edu.gsgp.population.populator.Populator;
 import edu.gsgp.population.pipeline.Pipeline;
+
 /**
  * @author Luiz Otavio Vilas Boas Oliveira
  * http://homepages.dcc.ufmg.br/~luizvbo/ 
