@@ -6,7 +6,11 @@
 
 package edu.gsgp.population;
 
+import edu.gsgp.Utils;
+import edu.gsgp.data.Dataset;
 import edu.gsgp.data.ExperimentalData;
+import edu.gsgp.data.Instance;
+import edu.gsgp.data.PropertiesManager;
 import edu.gsgp.nodes.Node;
 import edu.gsgp.population.fitness.Fitness;
 
@@ -25,24 +29,38 @@ public abstract class Individual implements Comparable<Individual>{
     protected BigInteger numNodes;
     protected Fitness fitnessFunction;
 
+
     public Individual(Node tree, BigInteger numNodes, Fitness fitnessFunction) {
         this.tree = tree;
         this.numNodes = new BigInteger(numNodes + "");
         this.fitnessFunction = fitnessFunction;
     }
-    
+
+    @Override
+    public abstract Individual clone();
+
+
+    @Override
+    public String toString() {
+        return tree.toString();
+    }
+
+
     public double eval(double[] input){
         return tree.eval(input);
     }
+
 
     public Node getTree() {
         return tree;
     }
 
+
     public void setTree(Node tree) {
         this.tree = tree;
     }
-    
+
+
     @Override
     public int compareTo(Individual o) {
         if (getFitness() < o.getFitness()){
@@ -54,21 +72,15 @@ public abstract class Individual implements Comparable<Individual>{
         return 0;
     }
 
+
     public boolean isBestSolution(double minError) {
         return getFitness() <= minError;
     }
 
-    @Override
-    public String toString() {
-        return tree.toString();
-    }
-        
+
     public Fitness getFitnessFunction(){
         return fitnessFunction;
     }
-    
-    @Override
-    public abstract Individual clone();
 
 
     /**
@@ -86,6 +98,30 @@ public abstract class Individual implements Comparable<Individual>{
      */
     public final void setNumNodes(BigInteger numNodes) {
         this.numNodes = numNodes;
+    }
+
+
+    /**
+     * Method to evaluate the fitness of a tree beginning at this node.
+     *
+     * @param expData
+     * @return
+     */
+    public void evaluateFitness(ExperimentalData expData){
+
+        // Compute the (training/test) semantics of generated random tree
+        for(Utils.DatasetType dataType : Utils.DatasetType.values()){
+            fitnessFunction.resetFitness(dataType, expData);
+            Dataset dataset = expData.getDataset(dataType);
+
+            int instanceIndex = 0;
+            for (Instance instance : dataset) {
+                double estimated = tree.eval(instance.input);
+                fitnessFunction.setSemanticsAtIndex(estimated, instance.output, instanceIndex++, dataType);
+            }
+
+            fitnessFunction.computeFitness(dataType);
+        }
     }
 
 

@@ -16,17 +16,15 @@ input_prefix = "/Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/result
 output_prefix = "/Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/processed/"
 
 input_paths = [
-    "gsgp/",
     "gsg2p/"
     ]
 
 output_paths = [
-    "gsgp/size/,
     "gsg2p/size/"
 ]
 
 for output_path in output_paths:
-    os.makedirs(output_prefix + output_path)
+    os.makedirs(output_prefix + output_path, exist_ok=True)
 
 def main(args):
     for dataset in datasets:

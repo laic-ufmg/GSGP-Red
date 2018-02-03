@@ -85,13 +85,7 @@ public class GSMBreeder extends Breeder{
 
         Fitness fitnessFunction = evaluate(p, rt1, rt2, expData);
 
-        Integer rt1Hash = rt1.toString().hashCode();
-        Integer rt2Hash = rt2.toString().hashCode();
-
-        properties.mutationMasks.put(rt1Hash, rt1);
-        properties.mutationMasks.put(rt2Hash, rt2);
-
-        GSGPIndividual offspring = new GSGPIndividual(numNodes, fitnessFunction, p, rt1Hash, rt2Hash, properties.getMutationStep());
+        GSGPIndividual offspring = new GSGPIndividual(numNodes, fitnessFunction, p, rt1, rt2, properties.getMutationStep());
 
         return offspring;
     }

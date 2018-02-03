@@ -19,6 +19,7 @@ import edu.gsgp.data.PropertiesManager;
 import edu.gsgp.population.fitness.Fitness;
 import edu.gsgp.population.populator.Populator;
 import edu.gsgp.population.pipeline.Pipeline;
+import sun.security.util.BigInt;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,15 +68,6 @@ public class GSGP {
         Population population = populator.populate(rndGenerator, expData, properties.getPopulationSize());
 
         statistics.addGenerationStatistic(population);
-
-        // Map Objects to hashCodes used in individual reconstruction
-        Map<Integer, Individual> initialInds = new HashMap<>();
-
-        // Maps initial individuals' Object to hashCode
-        for(Individual ind : population) {
-            Integer indHash = ind.hashCode();
-            initialInds.put(indHash, ind);
-        }
         
         for(int i = 0; i < properties.getNumGenerations() && !canStop; i++){
             // Evolve a new Population
@@ -95,35 +87,41 @@ public class GSGP {
             statistics.addGenerationStatistic(population);
         }
 
+        Individual bestIndividual = population.getBestIndividual();
+
+        String originalSize = bestIndividual.getNumNodes().toString();
+
+        // Uncomment when printing extra data
+//        GSGPIndividual originalIndividual = ((GSGPIndividual) bestIndividual).clone();
+
         // Reconstruct best individual
-        GSGPIndividual reconstructedInd = reconstructIndividual(population.get(0), initialInds, properties, expData);
+        ((GSGPIndividual) bestIndividual).reconstructIndividual();
+        bestIndividual.evaluateFitness(expData);
 
         // Save best individual's statistics to file and also stops the clock
-        statistics.finishEvolution(reconstructedInd, ((GSGPIndividual) population.getBestIndividual()).getNumNodes().toString());
-
+        statistics.finishEvolution(bestIndividual, originalSize);
 
         /******* EXTRA DATA *******
 
         // Print equivalent trees' size for comparison
-        System.out.println("Best Individual Size: " + ((GSGPIndividual) population.getBestIndividual()).getNumNodes());
-        System.out.println("Reconstruction Size: " + reconstructedInd.getNumNodes() + "\n");;
+        System.out.println("Best Individual Size: " + originalSize);
+        System.out.println("Reconstruction Size: " + bestIndividual.getNumNodes() + "\n");;
 
         // Print sizes in scientific notation
         NumberFormat formatter = new DecimalFormat("0.###E0");
 
         // Print trees' features
-        System.out.println("Best Individual Size: " + formatter.format(((GSGPIndividual) population.getBestIndividual()).getNumNodes()));
-        System.out.println("Best Individual TR Fitness: " + population.getBestIndividual().getTrainingFitnessAsString());
-        System.out.println("Best Individual TS Fitness: " + population.getBestIndividual().getTestFitnessAsString());
+        System.out.println("Best Individual Size: " + formatter.format(originalIndividual.getNumNodes()));
+        System.out.println("Best Individual TR Fitness: " + originalIndividual.getTrainingFitnessAsString());
+        System.out.println("Best Individual TS Fitness: " + originalIndividual.getTestFitnessAsString());
         System.out.println("---------------------------------------------");
-        System.out.println("Reconstruction Size: " + formatter.format(reconstructedInd.getTree().getNumNodes()));
-        System.out.println("Reconstruction TR Fitness: " + reconstructedInd.getTrainingFitnessAsString());
-        System.out.println("Reconstruction TS Fitness: " + reconstructedInd.getTestFitnessAsString() + "\n");
+        System.out.println("Reconstruction Size: " + formatter.format(bestIndividual.getNumNodes()));
+        System.out.println("Reconstruction TR Fitness: " + bestIndividual.getTrainingFitnessAsString());
+        System.out.println("Reconstruction TS Fitness: " + bestIndividual.getTestFitnessAsString() + "\n");
 
         // Print reconstructed tree representations
-        System.out.println(reconstructedTree);
-        System.out.println(((GSGPIndividual) population.getBestIndividual()).getReprCoef() + "\n");
-
+        System.out.println(bestIndividual + "\n");
+        System.out.println(((GSGPIndividual) bestIndividual).getPropagationRepr() + "\n");
         **************************/
     }
 
@@ -138,97 +136,4 @@ public class GSGP {
     }
 
 
-    /**
-     * Reconstruct an equivalent tree based in the individual's coefficient representation.
-     *
-     * @param individual
-     * @param initialPop
-     * @param properties
-     * @param expData
-     * @return
-     */
-    public GSGPIndividual reconstructIndividual(Individual individual, Map initialPop, PropertiesManager properties, ExperimentalData expData) {
-        // Maps of coefficients related to each subtree
-        HashMap<Integer, Double> reprCoef = (HashMap<Integer, Double>) ((GSGPIndividual) individual).getReprCoef();
-
-        // Root node
-        Add root = new Add();
-
-        Function current = root;
-
-        int i = 0;
-        int mapSize = reprCoef.size();  //The case where size is equal 1 is impossible
-
-        // Iterate over subtrees
-        for(Map.Entry<Integer, Double> entry : reprCoef.entrySet()) {
-            i += 1;
-
-            // Multiplication to apply coefficient to subtree
-            Mul applyCoef = new Mul();
-
-            // Include coefficient as a subnode of the multiplication
-            applyCoef.addNode(new ERC(entry.getValue()),0);
-
-            // Get and attach subtree root node
-            Individual subInd = (Individual) initialPop.get(entry.getKey());
-            if(subInd == null) {  // Subtree is a mutation mask
-                applyCoef.addNode((Node) properties.mutationMasks.get(entry.getKey()), 1);
-            }
-            else {  // Subtree is a parent individual
-                applyCoef.addNode(subInd.getTree(), 1);
-            }
-
-            // Last element has been reached
-            if(i == mapSize) {
-                current.addNode(applyCoef, 1);
-                break;
-            }
-
-            // Attach new term to the main tree
-            current.addNode(applyCoef, 0);
-
-            // Next element is the last, don't append another Add Function into the tree
-            if(i + 1 == mapSize) {
-                continue;
-            }
-
-            // Addition operation necessary to continue the linear combination of functions
-            Add nextAdd = new Add();
-            current.addNode(nextAdd, 1);
-
-            current = nextAdd;
-        }
-
-        Fitness fitnessFunction = evaluateFitness(root, properties, expData);
-
-        return new GSGPIndividual(root, BigInteger.valueOf(root.getNumNodes()), fitnessFunction);
-    }
-
-
-    /**
-     * Method to evaluate the fitness of a tree beginning at this node.
-     *
-     * @param tree
-     * @param properties
-     * @param expData
-     * @return
-     */
-    public Fitness evaluateFitness(Node tree, PropertiesManager properties, ExperimentalData expData){
-        Fitness fitnessFunction = properties.getFitnessFunction();
-
-        // Compute the (training/test) semantics of generated random tree
-        for(Utils.DatasetType dataType : Utils.DatasetType.values()){
-            fitnessFunction.resetFitness(dataType, expData);
-            Dataset dataset = expData.getDataset(dataType);
-
-            int instanceIndex = 0;
-            for (Instance instance : dataset) {
-                double estimated = tree.eval(instance.input);
-                fitnessFunction.setSemanticsAtIndex(estimated, instance.output, instanceIndex++, dataType);
-            }
-
-            fitnessFunction.computeFitness(dataType);
-        }
-        return fitnessFunction;
-    }
 }

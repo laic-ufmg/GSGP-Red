@@ -22,6 +22,11 @@ public class FitnessRMSE extends Fitness{
 
     public FitnessRMSE() {
     }
+
+    public FitnessRMSE(double rmseTr, double rmseTs) {
+        this.rmseTr = rmseTr;
+        this.rmseTs = rmseTs;
+    }
     
     public void setRMSE(double rmse, DatasetType dataType) {
         if(dataType == DatasetType.TRAINING)
@@ -62,6 +67,11 @@ public class FitnessRMSE extends Fitness{
     @Override
     public Fitness softClone() {
         return new FitnessRMSE();
+    }
+
+    @Override
+    public Fitness clone() {
+        return new FitnessRMSE(rmseTr, rmseTs);
     }
 
     @Override

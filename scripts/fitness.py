@@ -28,7 +28,7 @@ output_paths = [
 file_names = ["trFitness.csv", "tsFitness.csv"]
 
 for output_path in output_paths:
-    os.makedirs(output_prefix + output_path)
+    os.makedirs(output_prefix + output_path, exist_ok=True)
 
 def main(args):
     for dataset in datasets:

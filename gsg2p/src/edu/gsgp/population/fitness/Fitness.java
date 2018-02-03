@@ -72,6 +72,7 @@ public abstract class Fitness{
     public abstract void computeFitness(DatasetType dataType);
     
     public abstract Fitness softClone();
+    public abstract Fitness clone();
     public abstract double getTrainingFitness();
     public abstract double getTestFitness();
     public abstract double getComparableValue();

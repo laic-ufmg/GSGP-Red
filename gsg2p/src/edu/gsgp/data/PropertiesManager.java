@@ -100,13 +100,8 @@ public class PropertiesManager {
     // Used do double check the parameters loaded/used by the experiment
     private StringBuilder loadedParametersLog;
 
-    // Saves the trees generated in mutation before we implement the pool of trees
-    public Map<Integer, Node> mutationMasks;
-
     public PropertiesManager(String args[]) throws Exception{
         loadedParametersLog = new StringBuilder();
-
-        mutationMasks = new HashMap<>();
 
         setOptions();
         parameterLoaded = loadParameterFile(args);
