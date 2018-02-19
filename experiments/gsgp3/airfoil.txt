@@ -1,0 +1,4 @@
+parent = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/experiments/gsgp3/master.txt
+experiment.data = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/airfoil-train-#.csv
+experiment.data.test = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/airfoil-test-#.csv
+experiment.file.prefix = output-airfoil

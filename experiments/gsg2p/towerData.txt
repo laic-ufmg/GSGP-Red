@@ -1,4 +1,0 @@
-parent = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/experiments/gsg2p/master.txt
-experiment.data = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/towerData-train-#.csv
-experiment.data.test = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/towerData-test-#.csv
-experiment.file.prefix = output-towerData
