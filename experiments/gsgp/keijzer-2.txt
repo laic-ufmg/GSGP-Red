@@ -1,0 +1,4 @@
+parent = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/experiments/gsgp/master.txt
+experiment.data = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/keijzer-2-train-#.csv
+experiment.data.test = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/keijzer-2-test-#.csv
+experiment.file.prefix = output-keijzer-2

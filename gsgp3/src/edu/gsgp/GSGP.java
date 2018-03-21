@@ -93,6 +93,15 @@ public class GSGP {
         GSGPIndividual reconstructedIndividual = ((GSGPIndividual) originalIndividual).reconstructIndividual();
         reconstructedIndividual.evaluateFitness(expData);
 
+        // Print trees' features
+        System.out.println("Original Size: " + originalIndividual.getNumNodesAsString());
+        System.out.println("Original TR Fitness: " + originalIndividual.getTrainingFitnessAsString());
+        System.out.println("Original TS Fitness: " + originalIndividual.getTestFitnessAsString());
+        System.out.println("---------------------------------------------");
+        System.out.println("Reconstruction Size: " + reconstructedIndividual.getNumNodesAsString() + "\n");
+        System.out.println("Reconstruction TR Fitness: " + reconstructedIndividual.getTrainingFitnessAsString());
+        System.out.println("Reconstruction TS Fitness: " + reconstructedIndividual.getTestFitnessAsString());
+
         // Save best individual's statistics to file and also stops the clock
         statistics.finishEvolution(reconstructedIndividual, originalIndividual.getNumNodesAsString());
 
