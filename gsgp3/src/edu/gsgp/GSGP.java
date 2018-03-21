@@ -87,37 +87,33 @@ public class GSGP {
             statistics.addGenerationStatistic(population);
         }
 
-        Individual bestIndividual = population.getBestIndividual();
-
-        String originalSize = bestIndividual.getNumNodes().toString();
-
-        // Uncomment when printing extra data
-//        GSGPIndividual originalIndividual = ((GSGPIndividual) bestIndividual).clone();
+        Individual originalIndividual = population.getBestIndividual();
 
         // Reconstruct best individual
-        ((GSGPIndividual) bestIndividual).reconstructIndividual();
-        bestIndividual.evaluateFitness(expData);
+        GSGPIndividual reconstructedIndividual = ((GSGPIndividual) originalIndividual).reconstructIndividual();
+        reconstructedIndividual.evaluateFitness(expData);
 
         // Save best individual's statistics to file and also stops the clock
-        statistics.finishEvolution(bestIndividual, originalSize);
+        statistics.finishEvolution(reconstructedIndividual, originalIndividual.getNumNodesAsString());
+
 
         /******* EXTRA DATA *******
 
         // Print equivalent trees' size for comparison
-        System.out.println("Best Individual Size: " + originalSize);
-        System.out.println("Reconstruction Size: " + bestIndividual.getNumNodes() + "\n");;
+        System.out.println("Original Size: " + originalIndividual.getNumNodesAsString());
+        System.out.println("Reconstruction Size: " + reconstructedIndividual.getNumNodesAsString() + "\n");
 
         // Print sizes in scientific notation
         NumberFormat formatter = new DecimalFormat("0.###E0");
 
         // Print trees' features
-        System.out.println("Best Individual Size: " + formatter.format(originalIndividual.getNumNodes()));
-        System.out.println("Best Individual TR Fitness: " + originalIndividual.getTrainingFitnessAsString());
-        System.out.println("Best Individual TS Fitness: " + originalIndividual.getTestFitnessAsString());
+        System.out.println("Original Size: " + originalIndividual.getNumNodesAsString());
+        System.out.println("Original TR Fitness: " + originalIndividual.getTrainingFitnessAsString());
+        System.out.println("Original TS Fitness: " + originalIndividual.getTestFitnessAsString());
         System.out.println("---------------------------------------------");
-        System.out.println("Reconstruction Size: " + formatter.format(bestIndividual.getNumNodes()));
-        System.out.println("Reconstruction TR Fitness: " + bestIndividual.getTrainingFitnessAsString());
-        System.out.println("Reconstruction TS Fitness: " + bestIndividual.getTestFitnessAsString() + "\n");
+        System.out.println("Reconstruction Size: " + reconstructedIndividual.getNumNodesAsString() + "\n");
+        System.out.println("Reconstruction TR Fitness: " + reconstructedIndividual.getTrainingFitnessAsString());
+        System.out.println("Reconstruction TS Fitness: " + reconstructedIndividual.getTestFitnessAsString());
 
         // Print reconstructed tree representations
         System.out.println(reconstructedTree);
@@ -135,6 +131,5 @@ public class GSGP {
     public Statistics getStatistics() {
         return statistics;
     }
-
 
 }

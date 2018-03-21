@@ -18,5 +18,5 @@ mkdir -p "$results_path"
 for dataset in "${datasets[@]}"
 do
     echo "Executing $dataset"
-    java -Xms512m -Xmx8g -jar "$gsgp_path"/gsg2p.jar -p "$experiments_path"/"$dataset".txt > "$results_path"/"$dataset".txt
+    java -Xms512m -Xmx8g -jar "$gsgp_path"/gsgp3.jar -p "$experiments_path"/"$dataset".txt > "$results_path"/"$dataset".txt
 done

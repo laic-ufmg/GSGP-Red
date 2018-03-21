@@ -14,6 +14,7 @@ import edu.gsgp.nodes.Node;
  * luiz.vbo@gmail.com
  * Copyright (C) 2014, Federal University of Minas Gerais, Belo Horizonte, Brazil
  */
+
 public class Sub extends Function{
     public Sub() {
         super();

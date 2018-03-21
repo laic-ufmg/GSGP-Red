@@ -49,38 +49,47 @@ public class GSGPIndividual extends Individual{
     // Representation of the linear combination of functions
     private Map<String, LinearCombinationTerm> combinationRepr;
 
+
+    // Individual doesn't have an initial representation (probably from the initial population)
     public GSGPIndividual(Node tree, BigInteger numNodes, Fitness fitnessFunction) {
         super(tree, numNodes, fitnessFunction);
         combinationRepr = new HashMap<>();
 
-        // Individual doesn't have an initial representation (probably from the initial population)
         combinationRepr.put(tree.toString(), new LinearCombinationTerm(tree, 1));
     }
 
 
+    // Individual is a crossover offspring
     public GSGPIndividual(BigInteger numNodes, Fitness fitnessFunction, GSGPIndividual p1, GSGPIndividual p2, Double crossoverConst) {
         super(null, numNodes, fitnessFunction);
         combinationRepr = new HashMap<>();
 
-        // Individual is a crossover offspring
-        this.propagateCrossover(p1, p2, crossoverConst);
+        this.processCrossover(p1, p2, crossoverConst);
     }
 
 
+    // Individual is a mutation offspring
     public GSGPIndividual(BigInteger numNodes, Fitness fitnessFunction, GSGPIndividual p1, Node mutationT1, Node mutationT2, double mutationStep) {
         super(null, numNodes, fitnessFunction);
         combinationRepr = new HashMap<>();
 
-        // Individual is a mutation offspring
-        this.propagateMutation(p1, mutationT1, mutationT2, mutationStep);
+        this.processMutation(p1, mutationT1, mutationT2, mutationStep);
     }
 
 
-    public GSGPIndividual(BigInteger numNodes, Fitness fitnessFunction, Map<String, LinearCombinationTerm> propagationRepr) {
+    // Individual is a reconstruction
+    public GSGPIndividual(Node tree, BigInteger numNodes, Fitness fitnessFunction, Map<String, LinearCombinationTerm> combinationRepr) {
+        super(tree, numNodes, fitnessFunction);
+
+        this.combinationRepr = combinationRepr;
+    }
+
+
+    // Individual has been cloned
+    public GSGPIndividual(BigInteger numNodes, Fitness fitnessFunction, Map<String, LinearCombinationTerm> combinationRepr) {
         super(null, numNodes, fitnessFunction);
 
-        // Individual has been cloned
-        this.combinationRepr = propagationRepr;
+        this.combinationRepr = combinationRepr;
     }
 
 
@@ -147,46 +156,31 @@ public class GSGPIndividual extends Individual{
 
 
     /**
-     * Propagate coefficients for crossover offspring.
+     * Process the crossover offspring generating its reduced representation.
      *
      * @param p1
      * @param p2
      * @param crossoverConst
      */
-    public void propagateCrossover(GSGPIndividual p1, GSGPIndividual p2, Double crossoverConst) {
-        this.addCoefficients(p1.getCombinationRepr(), crossoverConst);
-
-        this.addCoefficients(p2.getCombinationRepr(), (1.0 - crossoverConst));
+    public void processCrossover(GSGPIndividual p1, GSGPIndividual p2, Double crossoverConst) {
+        this.expandAndAggregate(p1.getCombinationRepr(), crossoverConst);
+        this.expandAndAggregate(p2.getCombinationRepr(), (1.0 - crossoverConst));
     }
 
 
     /**
-     * Propagate coefficients for mutation offspring.
+     * Process the mutation offspring generating its reduced representation.
      *
      * @param p1
      * @param mutationT1
      * @param mutationT2
      * @param mutationStep
      */
-    public void propagateMutation(GSGPIndividual p1, Node mutationT1, Node mutationT2, double mutationStep) {
-        this.addCoefficients(p1.getCombinationRepr(), 1.0);
+    public void processMutation(GSGPIndividual p1, Node mutationT1, Node mutationT2, double mutationStep) {
+        this.expandAndAggregate(p1.getCombinationRepr(), 1.0);
 
-        String treeKey = mutationT1.toString();
-        LinearCombinationTerm storedTerm = this.combinationRepr.get(treeKey);
-        if(storedTerm != null)
-            storedTerm.coefficient += mutationStep;
-        else{
-            combinationRepr.put(treeKey, new LinearCombinationTerm(mutationT1, mutationStep));
-        }
-
-        treeKey = mutationT2.toString();
-        storedTerm = this.combinationRepr.get(treeKey);
-        if(storedTerm != null)
-            storedTerm.coefficient -= mutationStep;
-        else{
-            combinationRepr.put(treeKey, new LinearCombinationTerm(mutationT2, mutationStep * -1));
-
-        }
+        this.aggregateMutationMask(mutationT1, mutationStep);
+        this.aggregateMutationMask(mutationT2, mutationStep * -1);
     }
 
 
@@ -194,23 +188,47 @@ public class GSGPIndividual extends Individual{
      * Add coefficients from a parent's representation times a constant to this individual representation.
      *
      * @param parentRepr
-     * @param multiplyBy
+     * @param multiplicativeFactor
      */
-    public void addCoefficients(Map parentRepr, double multiplyBy) {
-        for(Map.Entry<String, LinearCombinationTerm> entry : ((HashMap<String, LinearCombinationTerm>) parentRepr).entrySet()) {
-            String treeKey = entry.getKey();
-            Double coef = entry.getValue().coefficient;
+    public void expandAndAggregate(Map parentRepr, double multiplicativeFactor) {
+        // Expands parent tree by individually treating its subtrees
+        for(Map.Entry<String, LinearCombinationTerm> subtree : ((HashMap<String, LinearCombinationTerm>) parentRepr).entrySet()) {
+            String subtreeKey = subtree.getKey();
 
-            LinearCombinationTerm storedTerm = this.combinationRepr.get(treeKey);
+            // Propagation of the coefficient in the current subtree of the expanded parent
+            Double newCoefficient = subtree.getValue().coefficient * multiplicativeFactor;
 
-            coef = coef * multiplyBy;
+            // Tries to retrieve the state of a subtree in the linear combination representation of the parent's offspring
+            LinearCombinationTerm storedTerm = this.combinationRepr.get(subtreeKey);
 
+            // Subtree is already present
             if(storedTerm != null) {
-                storedTerm.coefficient += coef;
+                // Aggregation of similar composing structures by coefficient summation
+                storedTerm.coefficient += newCoefficient;
             }
+            // Subtree is new
             else {
-                combinationRepr.put(treeKey, entry.getValue().copy(coef));
+                this.combinationRepr.put(subtreeKey, subtree.getValue().copy(newCoefficient));
             }
+        }
+    }
+
+
+    /**
+     * Aggregate the mutation masks into the mutation offspring linear combination representation.
+     *
+     * @param maskTree
+     * @param treeCoefficient
+     */
+    public void aggregateMutationMask(Node maskTree, double treeCoefficient) {
+        String treeKey = maskTree.toString();
+
+        LinearCombinationTerm storedTerm = this.combinationRepr.get(treeKey);
+        if(storedTerm != null) {
+            storedTerm.coefficient += treeCoefficient;
+        }
+        else {
+            this.combinationRepr.put(treeKey, new LinearCombinationTerm(maskTree, treeCoefficient));
         }
     }
 
@@ -218,7 +236,7 @@ public class GSGPIndividual extends Individual{
     /**
      * Reconstruct the individual tree to a smaller equivalent based in its coefficient representation.
      */
-    public void reconstructIndividual() {
+    public GSGPIndividual reconstructIndividual() {
         // Root node
         Add root = new Add();
 
@@ -261,8 +279,12 @@ public class GSGPIndividual extends Individual{
             }
         }
 
-        this.tree = root;
-        this.numNodes = BigInteger.valueOf(root.getNumNodes());
+        GSGPIndividual reconstructedIndividual = new GSGPIndividual(root,
+                                                                    BigInteger.valueOf(root.getNumNodes()),
+                                                                    this.fitnessFunction.clone(),
+                                                                    this.combinationRepr);
+
+        return reconstructedIndividual;
     }
 
 }
