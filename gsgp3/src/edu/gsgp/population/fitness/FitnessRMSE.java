@@ -23,7 +23,8 @@ public class FitnessRMSE extends Fitness{
     public FitnessRMSE() {
     }
 
-    public FitnessRMSE(double rmseTr, double rmseTs) {
+    public FitnessRMSE(double[] semanticsTr, double[] semanticsTs, double rmseTr, double rmseTs) {
+        super(semanticsTr, semanticsTs);
         this.rmseTr = rmseTr;
         this.rmseTs = rmseTs;
     }
@@ -71,7 +72,7 @@ public class FitnessRMSE extends Fitness{
 
     @Override
     public Fitness clone() {
-        return new FitnessRMSE(rmseTr, rmseTs);
+        return new FitnessRMSE(semanticsTr, semanticsTs, rmseTr, rmseTs);
     }
 
     @Override

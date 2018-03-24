@@ -25,6 +25,11 @@ public abstract class Fitness{
     public Fitness() {
     }
 
+    public Fitness(double[] semanticsTr, double[] semanticsTs) {
+        this.semanticsTr = semanticsTr;
+        this.semanticsTs = semanticsTs;
+    }
+
     /**
      * Return the semantics relative to the training or test data
      * @param dataType What semantics to return (relative to training or test)

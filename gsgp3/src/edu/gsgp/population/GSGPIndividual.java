@@ -118,9 +118,19 @@ public class GSGPIndividual extends Individual{
     }
 
 
+    public double getTrainingFitness() {
+        return fitnessFunction.getTrainingFitness();
+    }
+
+
     @Override
     public String getTrainingFitnessAsString() {
         return Utils.format(fitnessFunction.getTrainingFitness());
+    }
+
+
+    public double getTestFitness() {
+        return fitnessFunction.getTestFitness();
     }
 
 
