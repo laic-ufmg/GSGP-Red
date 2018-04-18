@@ -1,4 +1,0 @@
-parent = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/experiments/gsgp3/master.txt
-experiment.data = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/vladislavleva-3-train-#.csv
-experiment.data.test = /Users/joaofbsm/Documents/UFMG/2018-1/POC2/implementation/datasets/vladislavleva-3-test-#.csv
-experiment.file.prefix = output-vladislavleva-3

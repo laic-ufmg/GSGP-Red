@@ -1,14 +1,14 @@
-# GSGP3
-Geometric Semantic Genetic Programming with Pruned Programs
+# GSGP-Red
+Geometric Semantic Genetic Programming with Reduced trees
 
 ## Description
-This project is an extension of the GSGP Java implementation first presented at [https://github.com/luizvbo/gsgp-gd](https://github.com/luizvbo/gsgp-gd). Some parts of the code are reworked to make it more clear and intuitive. Also, in order to greatly reduce the size of the solutions, the workflow of GSGP3 has been included in its respective implementation.
+This project is an extension of the GSGP Java implementation first presented at [https://github.com/luizvbo/gsgp-gd](https://github.com/luizvbo/gsgp-gd). Some parts of the code are reworked to make it more clear and intuitive. Also, in order to greatly reduce the size of the solutions, the workflow of GSGP-Red has been included in its respective implementation.
 
 ## Repository contents
 * _experiments_: parameter files for each implementation.
-* _gsgp_ and _gsgp3_: algorithm implementations in Java.
+* _gsgp_ and _gsgp-red_: algorithm implementations in Java.
 * _scripts_: miscellaneous scripts, mostly used for extended analysis of results.
-* *execute_gsgp.py* and *execute_gsgp3.py*: customizable execution scripts.
+* *execute_gsgp.py* and *execute_gsgp-red.py*: customizable execution scripts.
 
 ## Datasets
 
