@@ -1,5 +1,5 @@
 # GSGP-Red
-Geometric Semantic Genetic Programming with Reduced trees
+**G**eometric **S**emantic **G**enetic **P**rogramming with **Red**uced trees
 
 ## Description
 This project is an extension of the GSGP Java implementation first presented at [https://github.com/luizvbo/gsgp-gd](https://github.com/luizvbo/gsgp-gd). Some parts of the code are reworked to make it more clear and intuitive. Also, in order to greatly reduce the size of the solutions, the workflow of GSGP-Red has been included in its respective implementation.
@@ -32,4 +32,4 @@ For each implementation, the **jar** can be found at `/out/artifacts`. The param
 
 
 ## Published papers
-* Joao F. B. S. Martins, Luiz Otavio V. B. Oliveira, Luis F. Miranda, Felipe Casadei, and Gisele L. Pappa. **Solving the exponential growth of symbolic regression trees in geometric semantic genetic programming**. To appear in _Proceedings of the Genetic and Evolutionary Computation Conference_, GECCO ’18, Kyoto, Japan, 2018. ACM. ISBN 978-1-4503-5618-3/18/07. doi: 10.1145/3205455.3205593
+* Joao F. B. S. Martins, Luiz Otavio V. B. Oliveira, Luis F. Miranda, Felipe Casadei, and Gisele L. Pappa. **Solving the exponential growth of symbolic regression trees in geometric semantic genetic programming**. In _Proceedings of the Genetic and Evolutionary Computation Conference_, GECCO ’18, Kyoto, Japan, 2018. ACM. ISBN 978-1-4503-5618-3/18/07. doi: 10.1145/3205455.3205593
